@@ -117,7 +117,7 @@
     <string name="app_lock_pin_prefs">App Lock PIN</string>
     <string name="app_lock_enable">App Lock Enabled</string>
     <string name="app_lock_disabled">App Lock Disabled</string>
-    <string name="pin_invalid">PIN Invalid!</string>
+    <string name="pin_invalid">Incorrect PIN. Try Again.</string>
     <string name="pin_ok">PIN OK!</string>
     <!-- About Activity -->
     <string name="about1"><b>Hentoid</b> is a Doujinshi &amp; H-Manga archiving app. Hentoid was originally created by <b>Cesar Arasaki</b>.</string>

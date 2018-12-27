@@ -6,12 +6,11 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.os.Vibrator;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import me.devsaki.hentoid.R;
 import me.devsaki.hentoid.abstracts.BaseActivity;
-import me.devsaki.hentoid.fragments.NumpadFragment;
+import me.devsaki.hentoid.fragments.PinEntryFragment;
 import me.devsaki.hentoid.util.Preferences;
 
 /**
@@ -22,7 +21,7 @@ import me.devsaki.hentoid.util.Preferences;
  *
  * @see #wrapIntent(Context, Intent)
  */
-public class UnlockActivity extends BaseActivity implements NumpadFragment.Parent {
+public class UnlockActivity extends BaseActivity implements PinEntryFragment.Parent {
 
     private static final String EXTRA_DEFAULT = "default";
 
@@ -45,17 +44,7 @@ public class UnlockActivity extends BaseActivity implements NumpadFragment.Paren
         return intent;
     }
 
-    private final StringBuilder pinValue = new StringBuilder(4);
-
-    private TextView spielText;
-
-    private View placeholderImage1;
-
-    private View placeholderImage2;
-
-    private View placeholderImage3;
-
-    private View placeholderImage4;
+    private TextView instructionText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,89 +57,34 @@ public class UnlockActivity extends BaseActivity implements NumpadFragment.Paren
 
         setContentView(R.layout.activity_unlock);
 
-        spielText = findViewById(R.id.textSpiel);
-
-        placeholderImage1 = findViewById(R.id.image_placeholder_1);
-
-        placeholderImage2 = findViewById(R.id.image_placeholder_2);
-
-        placeholderImage3 = findViewById(R.id.image_placeholder_3);
-
-        placeholderImage4 = findViewById(R.id.image_placeholder_4);
+        instructionText = findViewById(R.id.text_instruction);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        clearPin();
+        instructionText.setText(R.string.app_lock_pin);
     }
 
     @Override
-    public void onKeyClick(String s) {
-        if (pinValue.length() == 4) return;
-
-        pinValue.append(s);
-        switch (pinValue.length()) {
-            case 4: placeholderImage4.setVisibility(View.VISIBLE);
-                break;
-            case 3: placeholderImage3.setVisibility(View.VISIBLE);
-                break;
-            case 2: placeholderImage2.setVisibility(View.VISIBLE);
-                break;
-            case 1: placeholderImage1.setVisibility(View.VISIBLE);
-                break;
-        }
-
-        if (pinValue.length() == 4) checkPin();
-        else spielText.setText(R.string.app_lock_pin);
-    }
-
-    @Override
-    public void onBackspaceClick() {
-        if (pinValue.length() == 0) return;
-
-        pinValue.setLength(pinValue.length() - 1);
-        switch (pinValue.length()) {
-            case 0: placeholderImage1.setVisibility(View.INVISIBLE);
-                break;
-            case 1: placeholderImage2.setVisibility(View.INVISIBLE);
-                break;
-            case 2: placeholderImage3.setVisibility(View.INVISIBLE);
-                break;
-            case 3: placeholderImage4.setVisibility(View.INVISIBLE);
-                break;
-        }
-
-        spielText.setText(R.string.app_lock_pin);
-    }
-
-    private void checkPin() {
+    public void onPinAccept(String pin) {
         invokeVibrate();
 
-        if (Preferences.getAppLockPin().equals(pinValue.toString())) {
+        if (Preferences.getAppLockPin().equals(pin)) {
             isUnlocked = true;
 
-            spielText.setText(R.string.pin_ok);
+            instructionText.setVisibility(View.GONE);
 
-            ImageView lockImage1 = findViewById(R.id.image_lock_1);
-            lockImage1.setImageResource(R.drawable.ic_lock_open);
+            View pinEntryFragment = findViewById(R.id.fragment_pin_entry);
+            pinEntryFragment.setVisibility(View.GONE);
 
-            ImageView lockImage2 = findViewById(R.id.image_lock_2);
-            lockImage2.setImageResource(R.drawable.ic_lock_open);
+            View pinOkText = findViewById(R.id.text_pin_ok);
+            pinOkText.setVisibility(View.VISIBLE);
 
             goToNextActivity();
         } else {
-            spielText.setText(R.string.pin_invalid);
-            clearPin();
+            instructionText.setText(R.string.pin_invalid);
         }
-    }
-
-    private void clearPin() {
-        pinValue.setLength(0);
-        placeholderImage1.setVisibility(View.INVISIBLE);
-        placeholderImage2.setVisibility(View.INVISIBLE);
-        placeholderImage3.setVisibility(View.INVISIBLE);
-        placeholderImage4.setVisibility(View.INVISIBLE);
     }
 
     private void invokeVibrate() {

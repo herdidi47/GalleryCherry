@@ -132,7 +132,7 @@
             android:name=".activities.UnlockActivity"
             android:noHistory="true"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.Search" />
+            android:theme="@style/StrawberryTheme.NoActionBar" />
         <activity
             android:name=".activities.RegisterPinActivity"
             android:screenOrientation="portrait"

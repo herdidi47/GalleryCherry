@@ -90,6 +90,18 @@
         <item name="android:windowBackground">@color/red_bg</item>
     </style>
 
+    <style name="StrawberryTheme" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/red_primary</item>
+        <item name="colorPrimaryDark">@color/red_dark</item>
+        <item name="colorAccent">@color/red_accent</item>
+        <item name="android:windowBackground">@color/red_bg</item>
+    </style>
+
+    <style name="StrawberryTheme.NoActionBar" >
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
     <style name="BottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
         <item name="colorPrimary">@color/red_primary</item>
         <item name="colorPrimaryDark">@color/red_dark</item>
