@@ -6,7 +6,7 @@ ___
 
 ![cherry_app](https://user-images.githubusercontent.com/35880555/50556968-6f3d3280-0ce0-11e9-8355-b135b02a5869.png)
 
-##### `GalleryCherry` is a XXX galleries archiving app.
+##### `GalleryCherry` is a XXX galleries archiving app. Is is a fork of the [Hentoid](https://github.com/avluis/Hentoid) app, which is dedicated to Doujinshi and H-Manga.
 ###### `GalleryCherry` will support :
 ###### [xhamster](https://xhamster.com/photos) and many more
 
