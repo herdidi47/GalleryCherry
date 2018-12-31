@@ -3,7 +3,7 @@
   Description: XXX Galleries management Android App
 -->
 ___
-![CI status (dev branch)](https://app.bitrise.io/app/bb99306cfe678782/status.svg?token=Dkxnqyh9qrkFe_sIUGeRNg&branch=dev)
+CI status (dev branch) : ![CI status (dev branch)](https://app.bitrise.io/app/bb99306cfe678782/status.svg?token=Dkxnqyh9qrkFe_sIUGeRNg&branch=dev)
 
 ![cherry_app](https://user-images.githubusercontent.com/35880555/50556968-6f3d3280-0ce0-11e9-8355-b135b02a5869.png)
 
