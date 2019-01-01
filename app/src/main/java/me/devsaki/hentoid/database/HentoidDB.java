@@ -648,26 +648,21 @@ public class HentoidDB extends SQLiteOpenHelper {
 
         synchronized (locker) {
             Timber.d("selectContentByExternalRef");
-            SQLiteDatabase db = null;
-
-            Cursor cursorContent = null;
-
             String sql = ContentTable.SELECT_BY_EXTERNAL_REF;
 
             sql = sql.replace("%1", Helper.buildListAsString(uniqueIds, "'"));
 
             Timber.v(sql);
 
-            try {
-                db = getReadableDatabase();
-                cursorContent = db.rawQuery(sql, new String[]{
-                        site.getCode() + "",
-                        StatusContent.DOWNLOADED.getCode() + "",
-                        StatusContent.ERROR.getCode() + "",
-                        StatusContent.MIGRATED.getCode() + "",
-                        StatusContent.DOWNLOADING.getCode() + "",
-                        StatusContent.PAUSED.getCode() + ""
-                });
+            SQLiteDatabase db = getReadableDatabase();
+            try (Cursor cursorContent = db.rawQuery(sql, new String[]{
+                    site.getCode() + "",
+                    StatusContent.DOWNLOADED.getCode() + "",
+                    StatusContent.ERROR.getCode() + "",
+                    StatusContent.MIGRATED.getCode() + "",
+                    StatusContent.DOWNLOADING.getCode() + "",
+                    StatusContent.PAUSED.getCode() + ""
+            })) {
 
                 // looping through all rows and adding to list
                 if (cursorContent.moveToFirst()) {
@@ -677,9 +672,38 @@ public class HentoidDB extends SQLiteOpenHelper {
                     } while (cursorContent.moveToNext());
                 }
             } finally {
-                if (cursorContent != null) {
-                    cursorContent.close();
+                if (db != null && db.isOpen()) {
+                    db.close(); // Closing database connection
                 }
+            }
+        }
+
+        return result;
+    }
+
+    public List<Content> selectContentByStatus(StatusContent status) {
+        List<Content> result = new ArrayList<>();
+
+        synchronized (locker) {
+            Timber.d("selectContentByStatus");
+
+            String sql = ContentTable.SELECT_BY_STATUS;
+
+            Timber.v(sql);
+
+            SQLiteDatabase db = getReadableDatabase();
+            try (Cursor cursorContent = db.rawQuery(sql, new String[]{
+                    status.getCode() + ""
+            })) {
+
+                // looping through all rows and adding to list
+                if (cursorContent.moveToFirst()) {
+
+                    do {
+                        result.add(populateContent(cursorContent, db, false));
+                    } while (cursorContent.moveToNext());
+                }
+            } finally {
                 if (db != null && db.isOpen()) {
                     db.close(); // Closing database connection
                 }
@@ -854,7 +878,7 @@ public class HentoidDB extends SQLiteOpenHelper {
         return result;
     }
 
-    List<Attribute> selectAvailableAttributes(int type, List<Attribute> attributes, boolean filterFavourites) {
+    List<Attribute> selectAvailableAttributes(AttributeType type, List<Attribute> attributes, String filter, boolean filterFavourites) {
         ArrayList<Attribute> result = new ArrayList<>();
 
         synchronized (locker) {
@@ -864,10 +888,15 @@ public class HentoidDB extends SQLiteOpenHelper {
             if (attributes != null) {
                 // Detect the presence of sources within given attributes
                 List<Integer> sources = new ArrayList<>();
-                List<Integer> attrs = new ArrayList<>();
+                List<Attribute> attrs = new ArrayList<>();
                 for (Attribute a : attributes)
                     if (a.getType().equals(AttributeType.SOURCE)) sources.add(a.getId());
-                    else attrs.add(a.getId());
+                    else attrs.add(a);
+
+                if (filter != null && !filter.trim().isEmpty()) {
+                    sql += AttributeTable.SELECT_ALL_ATTR_FILTER;
+                    sql = sql.replace("%2", filter);
+                }
 
                 if (sources.size() > 0) {
                     sql += AttributeTable.SELECT_ALL_SOURCE_FILTER;
@@ -888,13 +917,13 @@ public class HentoidDB extends SQLiteOpenHelper {
             Timber.v(sql);
 
             SQLiteDatabase db = getReadableDatabase();
-            try (Cursor cursorAttributes = db.rawQuery(sql, new String[]{type + ""})) {
+            try (Cursor cursorAttributes = db.rawQuery(sql, new String[]{type.getCode() + ""})) {
 
                 // looping through all rows and adding to list
                 if (cursorAttributes.moveToFirst()) {
 
                     do {
-                        result.add(new Attribute(AttributeType.searchByCode(type), cursorAttributes.getString(1), cursorAttributes.getString(2)).setCount(cursorAttributes.getInt(3)));
+                        result.add(new Attribute(AttributeType.searchByCode(type.getCode()), cursorAttributes.getString(1), cursorAttributes.getString(2)).setCount(cursorAttributes.getInt(3)));
                     } while (cursorAttributes.moveToNext());
                 }
             } finally {
@@ -916,7 +945,7 @@ public class HentoidDB extends SQLiteOpenHelper {
 
             String sql = AttributeTable.SELECT_ALL_BY_TYPE;
 
-            if (filter != null && filter.trim().length() > 0) {
+            if (filter != null && !filter.trim().isEmpty()) {
                 sql += AttributeTable.SELECT_ALL_ATTR_FILTER;
                 sql = sql.replace("%2", filter);
             }
