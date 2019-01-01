@@ -1,21 +1,21 @@
 <!--
-  Title: Hentoid
-  Description: Doujinshi Android App
+  Title: GalleryCherry
+  Description: XXX Galleries management Android App
 -->
 ___
+![CI status (dev branch)](https://app.bitrise.io/app/bb99306cfe678782/status.svg?token=Dkxnqyh9qrkFe_sIUGeRNg&branch=dev)
 
-![Hentoid App Icon](https://raw.githubusercontent.com/AVnetWS/Hentoid-Resources/master/repo/assets/img/ic_launcher-web.png)
+![cherry_app](https://user-images.githubusercontent.com/35880555/50556968-6f3d3280-0ce0-11e9-8355-b135b02a5869.png)
 
-##### `Hentoid` is a Doujinshi & H-Manga archiving app.
-###### `Hentoid` currently supports:
-###### [nhentai](https://nhentai.net/), [hentai cafe](https://hentai.cafe/), [hitomi](https://hitomi.la/), [asmhentai](http://asmhentai.com/), [tsumino](http://www.tsumino.com/), [pururin](https://pururin.io/) and [e-hentai](https://e-hentai.org/).
-###### Note: `Hentoid` can still import downloads from [FAKKU](https://www.fakku.net/) and [Pururin](https://raw.githubusercontent.com/AVnetWS/Hentoid-Resources/master/repo/assets/img/pururin.jpg).
-##### Check out the [Hentoid wiki](https://github.com/AVnetWS/Hentoid/wiki) if you need assistance installing `Hentoid` on your device.
-##### For the latest release, click [here](https://github.com/AVnetWS/Hentoid/releases/latest).
+##### `GalleryCherry` is a XXX galleries archiving app. Is is a fork of the [Hentoid](https://github.com/avluis/Hentoid) app, which is dedicated to Doujinshi and H-Manga.
+###### `GalleryCherry` will support :
+###### [xhamster](https://xhamster.com/photos) and many more
 
-##### Visit our [Discord Server](https://discord.gg/QEZ3qk9) to chat with other users, announcements, updates, app support or to hang out with the devs.
+##### Check out the [GalleryCherry wiki](https://github.com/RobbWatershed/GalleryCherry/wiki) if you need assistance installing `GalleryCherry` on your device.
+##### For the latest release, click [here](https://github.com/RobbWatershed/GalleryCherry/releases/latest).
+
+##### Visit our [Discord Server](https://discord.gg/waTF8vw) to chat with other users, announcements, updates, app support or to hang out with the devs.
+
 ___
-###### [Help us](https://github.com/AVnetWS/Hentoid/wiki/Contributing) shape `Hentoid` into the best H-Manga App for you.
-___
 
-<meta name='keywords' content='doujin, doujinshi, download doujinshi, android app, doujin android app, doujinshi android app, doujin android download, doujinshi android download'>
+<meta name='keywords' content='xxx android app, porn android app, porn, xxx, xxx galleries, porn galleries'>
