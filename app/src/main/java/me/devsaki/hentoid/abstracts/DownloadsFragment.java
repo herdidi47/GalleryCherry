@@ -54,7 +54,6 @@ import me.devsaki.hentoid.enums.Language;
 import me.devsaki.hentoid.enums.Site;
 import me.devsaki.hentoid.events.DownloadEvent;
 import me.devsaki.hentoid.events.ImportEvent;
-import me.devsaki.hentoid.fragments.AboutMikanDialogFragment;
 import me.devsaki.hentoid.listener.ContentListener;
 import me.devsaki.hentoid.listener.ItemClickListener.ItemSelectListener;
 import me.devsaki.hentoid.services.ContentQueueManager;
@@ -681,15 +680,6 @@ public abstract class DownloadsFragment extends BaseFragment implements ContentL
     @Override
     public void onCreateOptionsMenu(final Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.menu_content_list, menu);
-
-        MenuItem aboutMikanMenu = menu.findItem(R.id.action_about_mikan);
-        aboutMikanMenu.setVisible(MODE_MIKAN == mode);
-        if (MODE_MIKAN == mode) {
-            aboutMikanMenu.setOnMenuItemClickListener(item -> {
-                AboutMikanDialogFragment.show(getFragmentManager());
-                return true;
-            });
-        }
 
         orderMenu = menu.findItem(R.id.action_order);
         orderMenu.setVisible(MODE_LIBRARY == mode);

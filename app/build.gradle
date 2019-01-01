@@ -13,7 +13,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
     }
     defaultConfig {
-        applicationId "me.devsaki.hentoid"
+        applicationId "me.devsaki.cherry"
         minSdkVersion 15
         // Hold updating targetSdkVersion until implementing an image viewer
         // or Perfect Viewer implements Content URI

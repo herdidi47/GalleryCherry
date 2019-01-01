@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Slide 01 -->
-    <string name="slide_01_header">Welcome to Hentoid!</string>
-    <string name="slide_01_text">Hentoid is a Doujinshi\n&amp; H-Manga archiving app.</string>
+    <string name="slide_01_header">Welcome to GalleryCherry!</string>
+    <string name="slide_01_text">GalleryCherry is a XXX galleries\n archiving app.</string>
     <!-- Slide 02 -->
     <string name="slide_02_header">Permissions</string>
     <string name="slide_02_text">Got Marshmallows?\nWe need to ask you for permission to device storage.</string>

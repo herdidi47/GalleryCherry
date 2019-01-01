@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Hentoid</string>
-    <string name="app_id">me.devsaki.hentoid</string>
+    <string name="app_name">GalleryCherry</string>
+    <string name="app_id">me.devsaki.cherry</string>
     <string name="app_intro">Welcome</string>
     <!-- Activities -->
     <string name="title_activity_downloads">Downloads</string>
@@ -131,7 +131,7 @@
     <string name="about_github_url" translatable="false">https://github.com/AVnetWS/Hentoid</string>
     <string name="about_github_wiki_url" translatable="false">https://github.com/AVnetWS/Hentoid/wiki</string>
     <string name="about_discord" translatable="false"><u>Discord</u></string>
-    <string name="about_discord_url" translatable="false">https://discord.gg/QEZ3qk9</string> <!-- to update on about_mikan.html too -->
+    <string name="about_discord_url" translatable="false">https://discord.gg/waTF8vw</string>
     <string name="about_reddit" translatable="false"><u>Reddit</u></string>
     <string name="about_reddit_url" translatable="false">https://www.reddit.com/r/Hentoid/</string>
     <string name="about_licenses">Display Licenses</string>
