@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import io.reactivex.disposables.Disposable;
+import io.reactivex.disposables.CompositeDisposable;
 import me.devsaki.hentoid.collection.CollectionAccessor;
 import me.devsaki.hentoid.collection.LibraryMatcher;
 import me.devsaki.hentoid.database.domains.Attribute;
@@ -37,14 +37,14 @@ import timber.log.Timber;
 import static com.annimon.stream.Collectors.toList;
 import static io.reactivex.android.schedulers.AndroidSchedulers.mainThread;
 
-public class MikanAccessor implements CollectionAccessor {
+public class MikanCollectionAccessor implements CollectionAccessor {
 
     private final LibraryMatcher libraryMatcher;
-    private Disposable disposable;
+    private CompositeDisposable compositeDisposable = new CompositeDisposable();
 
     // == CONSTRUCTOR
 
-    public MikanAccessor(Context context) {
+    public MikanCollectionAccessor(Context context) {
         libraryMatcher = new LibraryMatcher(context);
     }
 
@@ -123,9 +123,9 @@ public class MikanAccessor implements CollectionAccessor {
         params.put("page", page + "");
         params.put("sort", showMostRecentFirst + "");
 
-        disposable = MikanServer.API.getRecent(getMikanCodeForSite(site), params)
+        compositeDisposable.add(MikanServer.API.getRecent(getMikanCodeForSite(site), params)
                 .observeOn(mainThread())
-                .subscribe((result) -> onContentSuccess(result, listener), (throwable) -> listener.onContentFailed(null, "Recent books failed to load - " + throwable.getMessage()));
+                .subscribe((result) -> onContentSuccess(result, listener), (throwable) -> listener.onContentFailed(null, "Recent books failed to load - " + throwable.getMessage())));
     }
 
     @Override
@@ -134,9 +134,9 @@ public class MikanAccessor implements CollectionAccessor {
             throw new UnsupportedOperationException("Site " + content.getSite().getDescription() + " not supported yet by Mikan search");
         }
 
-        disposable = MikanServer.API.getPages(getMikanCodeForSite(content.getSite()), content.getUniqueSiteId())
+        compositeDisposable.add(MikanServer.API.getPages(getMikanCodeForSite(content.getSite()), content.getUniqueSiteId())
                 .observeOn(mainThread())
-                .subscribe((result) -> onPagesSuccess(result, content, listener), (throwable) -> listener.onContentFailed(content, "Pages failed to load - " + throwable.getMessage()));
+                .subscribe((result) -> onPagesSuccess(result, content, listener), (throwable) -> listener.onContentFailed(content, "Pages failed to load - " + throwable.getMessage())));
     }
 
     @Override
@@ -176,9 +176,9 @@ public class MikanAccessor implements CollectionAccessor {
         if (attributes.size() > 0) params.put("language", Helper.buildListAsString(attributes));
 
 
-        disposable = MikanServer.API.search(getMikanCodeForSite(site) + suffix, params)
+        compositeDisposable.add(MikanServer.API.search(getMikanCodeForSite(site) + suffix, params)
                 .observeOn(mainThread())
-                .subscribe((result) -> onContentSuccess(result, listener), (throwable) -> listener.onContentFailed(null, "Search failed to load - " + throwable.getMessage()));
+                .subscribe((result) -> onContentSuccess(result, listener), (throwable) -> listener.onContentFailed(null, "Search failed to load - " + throwable.getMessage())));
     }
 
     @Override
@@ -208,11 +208,11 @@ public class MikanAccessor implements CollectionAccessor {
         // If not cached (or cache expired), get it from network
         if (null == attributes) {
             String endpoint = getEndpointPath(type);
-            disposable = MikanServer.API.getMasterData(endpoint)
+            compositeDisposable.add(MikanServer.API.getMasterData(endpoint)
                     .observeOn(mainThread())
                     .subscribe((result) -> {
                         onMasterDataSuccess(result, type.name(), filter, listener); // TODO handle caching in computing thread
-                    }, (throwable) -> listener.onResultFailed("Attributes failed to load - " + throwable.getMessage() ));
+                    }, (throwable) -> listener.onResultFailed("Attributes failed to load - " + throwable.getMessage())));
         } else {
             List<Attribute> result = filter(attributes, filter);
             listener.onResultReady(result, result.size());
@@ -226,20 +226,28 @@ public class MikanAccessor implements CollectionAccessor {
     }
 
     @Override
+    public boolean supportsAvailabilityFilter() {
+        return false;
+    }
+
+    @Override
+    public void getAttributeMasterData(List<AttributeType> types, String filter, List<Attribute> attrs, boolean filterFavourites, ResultListener<List<Attribute>> listener) {
+        throw new UnsupportedOperationException("Not implemented with Mikan");
+    }
+
+    @Override
     public void getAvailableAttributes(List<AttributeType> types, List<Attribute> attrs, boolean filterFavourites, ResultListener<List<Attribute>> listener) {
-        // Not implemented in Mikan
-        listener.onResultReady(null, 0);
+        throw new UnsupportedOperationException("Not implemented with Mikan");
     }
 
     @Override
     public void countAttributesPerType(List<Attribute> filter, ResultListener<SparseIntArray> listener) {
-        // Not implemented in Mikan
-        listener.onResultReady(null, 0);
+        throw new UnsupportedOperationException("Not implemented with Mikan");
     }
 
     @Override
     public void dispose() {
-        if (disposable != null) disposable.dispose();
+        compositeDisposable.clear();
     }
 
 
@@ -261,7 +269,8 @@ public class MikanAccessor implements CollectionAccessor {
             return;
         }
 
-        if (null == content) listener.onContentFailed(null, "Pages failed to load - Unexpected empty content");
+        if (null == content)
+            listener.onContentFailed(null, "Pages failed to load - Unexpected empty content");
         else {
             List<Content> list = new ArrayList<Content>() {{
                 add(content);
