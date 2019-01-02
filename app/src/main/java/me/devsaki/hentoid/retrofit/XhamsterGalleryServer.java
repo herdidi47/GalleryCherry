@@ -20,7 +20,7 @@ public class XhamsterGalleryServer {
 
     public interface Api {
 
-        @GET("/gallery/{id}")
+        @GET("gallery/{id}")
         Single<XhamsterContent> getGalleryMetadata(@Path("id") String contentId);
     }
 }

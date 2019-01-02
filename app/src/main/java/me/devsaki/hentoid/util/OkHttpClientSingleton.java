@@ -3,6 +3,8 @@ package me.devsaki.hentoid.util;
 import android.util.SparseArray;
 
 import java.io.IOException;
+import java.util.Hashtable;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import me.devsaki.hentoid.HentoidApp;
@@ -16,7 +18,7 @@ import okhttp3.Request;
  */
 public class OkHttpClientSingleton {
 
-    private static volatile SparseArray<OkHttpClient> instance = new SparseArray<>();
+    private static volatile Map<String, OkHttpClient> instance = new Hashtable<>();
     private static int DEFAULT_TIMEOUT = 20 * 1000;
 
     private OkHttpClientSingleton() {
@@ -31,9 +33,9 @@ public class OkHttpClientSingleton {
     }
 
     public static OkHttpClient getInstance(int timeoutMs, Interceptor interceptor) {
-        if (null == OkHttpClientSingleton.instance.get(timeoutMs)) {
+        if (null == OkHttpClientSingleton.instance.get(timeoutMs + "" + interceptor.toString())) {
             synchronized (OkHttpClientSingleton.class) {
-                if (null == OkHttpClientSingleton.instance.get(timeoutMs)) {
+                if (null == OkHttpClientSingleton.instance.get(timeoutMs + "" + interceptor.toString())) {
 
                     int CACHE_SIZE = 2 * 1024 * 1024; // 2 MB
 
@@ -45,11 +47,11 @@ public class OkHttpClientSingleton {
                             .cache(new Cache(HentoidApp.getAppContext().getCacheDir(), CACHE_SIZE));
 
 
-                    OkHttpClientSingleton.instance.put(timeoutMs, clientBuilder.build());
+                    OkHttpClientSingleton.instance.put(timeoutMs + "" + interceptor.toString(), clientBuilder.build());
                 }
             }
         }
-        return OkHttpClientSingleton.instance.get(timeoutMs);
+        return OkHttpClientSingleton.instance.get(timeoutMs + "" + interceptor.toString());
     }
 
     private static okhttp3.Response onIntercept(Interceptor.Chain chain) throws IOException {

@@ -20,7 +20,7 @@ public class XhamsterContent {
     private String galleryUrl;
     @Selector(value = "img.thumb", attr="src")
     private List<String> thumbs;
-    @Selector(".page-title h1")
+    @Selector("h1.page-title")
     private String title;
     @Selector("head title")
     private String headTitle;

@@ -3,19 +3,25 @@ package me.devsaki.hentoid.parsers;
 import android.net.Uri;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import me.devsaki.hentoid.database.domains.Content;
 import me.devsaki.hentoid.parsers.content.XhamsterGalleryContent;
 import me.devsaki.hentoid.parsers.content.XhamsterGalleryQuery;
 import me.devsaki.hentoid.util.Consts;
+import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
+import timber.log.Timber;
 
 /**
  * Created by avluis on 07/26/2016.
@@ -23,56 +29,33 @@ import okhttp3.Request;
  */
 public class XhamsterParser extends BaseParser {
 
-    final static String SERVICE_URL = "https://fr.xhamster.com/x-api";
-
     @Override
     protected List<String> parseImages(Content content) throws IOException {
         List<String> result = new ArrayList<>();
 
-//        CompositeDisposable compositeDisposable = new CompositeDisposable();
+        Gson gson = new Gson();
 
         for (int i = 0; i < Math.ceil(content.getQtyPages() / 16.0); i++) {
             XhamsterGalleryQuery query = new XhamsterGalleryQuery(content.getUniqueSiteId(), i);
 
-            Uri.Builder searchUri = new Uri.Builder()
+            HttpUrl url = new HttpUrl.Builder()
                     .scheme("https")
-                    .authority("fr.xhamster.com")
-                    .path("x-api")
-                    .query(query.toString());
+                    .host("xhamster.com")
+                    .addPathSegment("x-api")
+                    .addQueryParameter("r", "[" + gson.toJson(query) + "]") // Not a 100% JSON-compliant format
+                    .build();
 
-            Document doc = getOnlineDocument(searchUri.build().toString(), XhamsterParser::onIntercept);
+            Document doc = getOnlineDocument(url, XhamsterParser::onIntercept);
             if (doc != null) {
-                XhamsterGalleryContent galleryContent = new Gson().fromJson(doc.toString(), XhamsterGalleryContent.class);
+                // JSON response is wrapped between <html><head></head><body> [ ... ] </body></html>
+                String body = doc.toString()
+                        .replace("<html>\n" + " <head></head>\n" + " <body>\n" + "  [", "")
+                        .replace("]\n" + " </body>\n" + "</html>", "");
+
+                XhamsterGalleryContent galleryContent = gson.fromJson(body, XhamsterGalleryContent.class);
                 result.addAll(galleryContent.toImageUrlList());
             }
-
-/*
-            compositeDisposable.add(XhamsterImagesServer.API.getGalleryContent(query.toString()
-                    .subscribe(
-                            metadata -> listener.onResultReady(metadata.toContent(), 1), throwable -> {
-                                Timber.e(throwable, "Error parsing content.");
-                                listener.onResultFailed("");
-                            })
-            );
-*/
         }
-/*
-        String url = content.getReaderUrl();
-        String html = HttpClientHelper.call(url);
-        Timber.d("Parsing: %s", url);
-        Document doc = Jsoup.parse(html);
-        Elements imgElements = doc.select(".img-url");
-        // New Hitomi image URLs starting from june 2018
-        //  If book ID is even, starts with 'aa'; else starts with 'ba'
-        int referenceId = Integer.parseInt(content.getUniqueSiteId()) % 10;
-        if (1 == referenceId) referenceId = 0; // Yes, this is what Hitomi actually does (see common.js)
-        String imageHostname = Character.toString((char) (HOSTNAME_PREFIX_BASE + (referenceId % NUMBER_OF_FRONTENDS) )) + HOSTNAME_SUFFIX;
-
-        for (Element element : imgElements) {
-            result.add("https:" + element.text().replace("//g.", "//" + imageHostname + "."));
-        }
-*/
-//        compositeDisposable.clear();
 
         return result;
     }
