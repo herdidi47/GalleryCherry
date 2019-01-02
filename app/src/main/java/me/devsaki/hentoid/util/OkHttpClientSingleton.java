@@ -27,6 +27,10 @@ public class OkHttpClientSingleton {
     }
 
     public static OkHttpClient getInstance(int timeoutMs) {
+        return getInstance(timeoutMs, OkHttpClientSingleton::onIntercept);
+    }
+
+    public static OkHttpClient getInstance(int timeoutMs, Interceptor interceptor) {
         if (null == OkHttpClientSingleton.instance.get(timeoutMs)) {
             synchronized (OkHttpClientSingleton.class) {
                 if (null == OkHttpClientSingleton.instance.get(timeoutMs)) {
@@ -34,7 +38,7 @@ public class OkHttpClientSingleton {
                     int CACHE_SIZE = 2 * 1024 * 1024; // 2 MB
 
                     OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
-                            .addInterceptor(OkHttpClientSingleton::onIntercept)
+                            .addInterceptor(interceptor)
                             .connectTimeout(timeoutMs, TimeUnit.MILLISECONDS)
                             .readTimeout(timeoutMs, TimeUnit.MILLISECONDS)
                             .writeTimeout(timeoutMs, TimeUnit.MILLISECONDS)

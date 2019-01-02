@@ -3,35 +3,40 @@ package me.devsaki.hentoid.activities.websites;
 import me.devsaki.hentoid.database.domains.Content;
 import me.devsaki.hentoid.enums.Site;
 import me.devsaki.hentoid.listener.ResultListener;
-import me.devsaki.hentoid.retrofit.PururinServer;
+import me.devsaki.hentoid.retrofit.XhamsterGalleryServer;
 import timber.log.Timber;
 
-public class PururinActivity extends BaseWebActivity {
+/**
+ * Created by Robb on 01/2019
+ * Implements Xhamster source
+ */
+public class XhamsterActivity extends BaseWebActivity {
 
-    private static final String DOMAIN_FILTER = "pururin.io";
-    private static final String GALLERY_FILTER = "//pururin.io/gallery/";
+    private static final String DOMAIN_FILTER = "xhamster.com";
+    private static final String GALLERY_FILTER = "/gallery/";
 
     Site getStartSite() {
-        return Site.PURURIN;
+        return Site.XHAMSTER;
     }
+
 
     @Override
     protected CustomWebViewClient getWebClient() {
-        CustomWebViewClient client = new PururinViewClient(GALLERY_FILTER, getStartSite(), this);
+        CustomWebViewClient client = new XhamsterWebViewClient(GALLERY_FILTER, getStartSite(), this);
         client.restrictTo(DOMAIN_FILTER);
         return client;
     }
 
-    private class PururinViewClient extends CustomWebViewClient {
+    private class XhamsterWebViewClient extends CustomWebViewClient {
 
-        PururinViewClient(String filteredUrl, Site startSite, ResultListener<Content> listener) {
+        XhamsterWebViewClient(String filteredUrl, Site startSite, ResultListener<Content> listener) {
             super(filteredUrl, startSite, listener);
         }
 
         @Override
         protected void onGalleryFound(String url) {
             String[] galleryUrlParts = url.split("/");
-            compositeDisposable.add(PururinServer.API.getGalleryMetadata(galleryUrlParts[galleryUrlParts.length - 2], galleryUrlParts[galleryUrlParts.length - 1])
+            compositeDisposable.add(XhamsterGalleryServer.API.getGalleryMetadata(galleryUrlParts[galleryUrlParts.length - 1])
                     .subscribe(
                             metadata -> listener.onResultReady(metadata.toContent(), 1), throwable -> {
                                 Timber.e(throwable, "Error parsing content.");

@@ -46,7 +46,6 @@ import me.devsaki.hentoid.activities.ImportActivity;
 import me.devsaki.hentoid.activities.SearchActivity;
 import me.devsaki.hentoid.adapters.ContentAdapter;
 import me.devsaki.hentoid.collection.CollectionAccessor;
-import me.devsaki.hentoid.collection.mikan.MikanCollectionAccessor;
 import me.devsaki.hentoid.database.DatabaseCollectionAccessor;
 import me.devsaki.hentoid.database.domains.Attribute;
 import me.devsaki.hentoid.database.domains.Content;
@@ -467,7 +466,7 @@ public abstract class DownloadsFragment extends BaseFragment implements ContentL
     public View onCreateView(@NonNull LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
         if (this.getArguments() != null) mode = this.getArguments().getInt("mode");
-        collectionAccessor = (MODE_LIBRARY == mode) ? new DatabaseCollectionAccessor(mContext) : new MikanCollectionAccessor(mContext);
+        collectionAccessor = new DatabaseCollectionAccessor(mContext);
 
         View rootView = inflater.inflate(R.layout.fragment_downloads, container, false);
 
@@ -1073,7 +1072,7 @@ public abstract class DownloadsFragment extends BaseFragment implements ContentL
         else if (!selectedSearchTags.isEmpty())
             collectionAccessor.searchBooks("", selectedSearchTags, currentPage, booksPerPage, bookSortOrder, filterFavourites, this); // Advanced search
         else
-            collectionAccessor.getRecentBooks(Site.HITOMI, Language.ANY, currentPage, booksPerPage, bookSortOrder, filterFavourites, this); // Default search (display recent)
+            collectionAccessor.getRecentBooks(Site.XHAMSTER, Language.ANY, currentPage, booksPerPage, bookSortOrder, filterFavourites, this); // Default search (display recent)
     }
 
     protected abstract void showToolbar(boolean show);

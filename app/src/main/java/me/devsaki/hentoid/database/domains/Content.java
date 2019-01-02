@@ -7,15 +7,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import me.devsaki.hentoid.activities.websites.ASMHentaiActivity;
 import me.devsaki.hentoid.activities.websites.BaseWebActivity;
-import me.devsaki.hentoid.activities.websites.EHentaiActivity;
-import me.devsaki.hentoid.activities.websites.HentaiCafeActivity;
-import me.devsaki.hentoid.activities.websites.HitomiActivity;
-import me.devsaki.hentoid.activities.websites.NhentaiActivity;
-import me.devsaki.hentoid.activities.websites.PandaActivity;
-import me.devsaki.hentoid.activities.websites.PururinActivity;
-import me.devsaki.hentoid.activities.websites.TsuminoActivity;
+import me.devsaki.hentoid.activities.websites.XhamsterActivity;
 import me.devsaki.hentoid.enums.AttributeType;
 import me.devsaki.hentoid.enums.Site;
 import me.devsaki.hentoid.enums.StatusContent;
@@ -77,92 +70,28 @@ public class Content implements Serializable {
     }
 
     public String getUniqueSiteId() {
-        String[] paths;
-
         switch (site) {
-            case FAKKU:
-                return url.substring(url.lastIndexOf("/") + 1);
-            case EHENTAI:
-            case PURURIN:
-                paths = url.split("/");
-                return paths[1];
-            case HITOMI:
-                paths = url.split("/");
-                return paths[1].replace(".html", "");
-            case ASMHENTAI:
-            case ASMHENTAI_COMICS:
-            case NHENTAI:
-            case PANDA:
-            case TSUMINO:
-                return url.replace("/", "");
-            case HENTAICAFE:
-                return url.replace("/?p=", "");
+            case XHAMSTER:
+                return url.substring(url.lastIndexOf("-") + 1);
             default:
                 return "";
         }
     }
 
-    // Used for upgrade purposes
-    @Deprecated
-    public String getOldUniqueSiteId() {
-        String[] paths;
-        switch (site) {
-            case FAKKU:
-                return url.substring(url.lastIndexOf("/") + 1);
-            case PURURIN:
-                paths = url.split("/");
-                return paths[2].replace(".html", "") + "-" + paths[1];
-            case HITOMI:
-                paths = url.split("/");
-                return paths[1].replace(".html", "") + "-" +
-                        title.replaceAll("[^a-zA-Z0-9.-]", "_");
-            case ASMHENTAI:
-            case ASMHENTAI_COMICS:
-            case NHENTAI:
-            case PANDA:
-            case EHENTAI:
-            case TSUMINO:
-                return url.replace("/", "") + "-" + site.getDescription();
-            case HENTAICAFE:
-                return url.replace("/?p=", "") + "-" + site.getDescription();
-            default:
-                return null;
-        }
-    }
-
     public Class<?> getWebActivityClass() {
         switch (site) {
-            case HITOMI:
-                return HitomiActivity.class;
-            case NHENTAI:
-                return NhentaiActivity.class;
-            case ASMHENTAI:
-            case ASMHENTAI_COMICS:
-                return ASMHentaiActivity.class;
-            case HENTAICAFE:
-                return HentaiCafeActivity.class;
-            case TSUMINO:
-                return TsuminoActivity.class;
-            case PURURIN:
-                return PururinActivity.class;
-            case EHENTAI:
-                return EHentaiActivity.class;
-            case PANDA:
-                return PandaActivity.class;
+            case XHAMSTER:
+                return XhamsterActivity.class;
             default:
-                return BaseWebActivity.class; // Fallback for FAKKU
+                return BaseWebActivity.class;
         }
     }
 
     public String getCategory() {
-        if (site == Site.FAKKU) {
-            return url.substring(1, url.lastIndexOf("/"));
-        } else {
-            if (attributes != null) {
-                List<Attribute> attributesList = attributes.get(AttributeType.CATEGORY);
-                if (attributesList != null && attributesList.size() > 0) {
-                    return attributesList.get(0).getName();
-                }
+        if (attributes != null) {
+            List<Attribute> attributesList = attributes.get(AttributeType.CATEGORY);
+            if (attributesList != null && attributesList.size() > 0) {
+                return attributesList.get(0).getName();
             }
         }
 
@@ -181,26 +110,9 @@ public class Content implements Serializable {
     public String getGalleryUrl() {
         String galleryConst;
         switch (site) {
-            case PURURIN:
-                galleryConst = "/gallery";
-                break;
-            case HITOMI:
-                galleryConst = "/galleries";
-                break;
-            case ASMHENTAI:
-            case ASMHENTAI_COMICS:
-            case EHENTAI:           // Won't work because of the temporary key
-            case NHENTAI:
-                galleryConst = "/g";
-                break;
-            case TSUMINO:
-                galleryConst = "/Book/Info";
-                break;
-            case HENTAICAFE:
-            case PANDA:
             default:
-                galleryConst = "";
-                break; // Includes FAKKU & Hentai Cafe
+                galleryConst = "/gallery/";
+                break;
         }
 
         return site.getUrl() + galleryConst + url;
@@ -208,22 +120,8 @@ public class Content implements Serializable {
 
     public String getReaderUrl() {
         switch (site) {
-            case HITOMI:
-                return site.getUrl() + "/reader" + url;
-            case NHENTAI:
-                return getGalleryUrl() + "1/";
-            case TSUMINO:
-                return site.getUrl() + "/Read/View" + url;
-            case ASMHENTAI:
-                return site.getUrl() + "/gallery" + url + "1/";
-            case ASMHENTAI_COMICS:
-                return site.getUrl() + "/gallery" + url;
-            case EHENTAI:               // Won't work anyway because of the temporary key
-            case HENTAICAFE:
-            case PANDA:
+            case XHAMSTER:
                 return getGalleryUrl();
-            case PURURIN:
-                return site.getUrl() + "/read/" + url.substring(1).replace("/", "/01/");
             default:
                 return null;
         }

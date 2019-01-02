@@ -13,6 +13,7 @@ import javax.annotation.Nullable;
 
 import me.devsaki.hentoid.database.domains.Content;
 import me.devsaki.hentoid.util.OkHttpClientSingleton;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.ResponseBody;
@@ -26,7 +27,15 @@ public abstract class BaseParser implements ContentParser {
 
     @Nullable
     Document getOnlineDocument(String url) throws IOException {
-        OkHttpClient okHttp = OkHttpClientSingleton.getInstance(TIMEOUT);
+        return getOnlineDocument(url, null);
+    }
+
+    @Nullable
+    Document getOnlineDocument(String url, Interceptor interceptor) throws IOException {
+        OkHttpClient okHttp;
+        if (interceptor != null) okHttp = OkHttpClientSingleton.getInstance(TIMEOUT, interceptor);
+        else okHttp = OkHttpClientSingleton.getInstance(TIMEOUT);
+
         Request request = new Request.Builder().url(url).get().build();
         ResponseBody body = okHttp.newCall(request).execute().body();
         if (body != null) {

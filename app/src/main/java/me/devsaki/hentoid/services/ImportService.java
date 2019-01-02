@@ -12,24 +12,16 @@ import com.annimon.stream.Stream;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import me.devsaki.hentoid.database.HentoidDB;
-import me.devsaki.hentoid.database.domains.Attribute;
 import me.devsaki.hentoid.database.domains.Content;
-import me.devsaki.hentoid.database.domains.ContentV1;
-import me.devsaki.hentoid.enums.AttributeType;
 import me.devsaki.hentoid.enums.Site;
 import me.devsaki.hentoid.enums.StatusContent;
 import me.devsaki.hentoid.events.ImportEvent;
-import me.devsaki.hentoid.model.DoujinBuilder;
-import me.devsaki.hentoid.model.URLBuilder;
 import me.devsaki.hentoid.notification.import_.ImportCompleteNotification;
 import me.devsaki.hentoid.notification.import_.ImportStartNotification;
-import me.devsaki.hentoid.util.AttributeException;
 import me.devsaki.hentoid.util.Consts;
 import me.devsaki.hentoid.util.FileHelper;
 import me.devsaki.hentoid.util.JsonHelper;
@@ -192,8 +184,10 @@ public class ImportService extends IntentService {
         // Create the log
         StringBuilder logStr = new StringBuilder();
         logStr.append("Cleanup log : begin").append(System.getProperty("line.separator"));
-        if (log.isEmpty()) logStr.append("No activity to report - All folder names are formatted as expected.");
-        else for (String line : log) logStr.append(line).append(System.getProperty("line.separator"));
+        if (log.isEmpty())
+            logStr.append("No activity to report - All folder names are formatted as expected.");
+        else for (String line : log)
+            logStr.append(line).append(System.getProperty("line.separator"));
         logStr.append("Cleanup log : end");
 
         // Save it
@@ -221,136 +215,8 @@ public class ImportService extends IntentService {
         File json = new File(folder, Consts.JSON_FILE_NAME_V2); // (v2) JSON file format
         if (json.exists()) return importJsonV2(json);
 
-        json = new File(folder, Consts.JSON_FILE_NAME); // (v1) JSON file format
-        if (json.exists()) return importJsonV1(json, folder);
-
-        json = new File(folder, Consts.OLD_JSON_FILE_NAME); // (old) JSON file format (legacy and/or FAKKUDroid App)
-        if (json.exists()) return importJsonLegacy(json, folder);
-
         Timber.w("Book folder %s : no JSON file found !", folder.getAbsolutePath());
 
-        return null;
-    }
-
-    @SuppressWarnings("deprecation")
-    private static List<Attribute> from(List<URLBuilder> urlBuilders) {
-        List<Attribute> attributes = null;
-        if (urlBuilders == null) {
-            return null;
-        }
-        if (urlBuilders.size() > 0) {
-            attributes = new ArrayList<>();
-            for (URLBuilder urlBuilder : urlBuilders) {
-                Attribute attribute = from(urlBuilder, AttributeType.TAG);
-                if (attribute != null) {
-                    attributes.add(attribute);
-                }
-            }
-        }
-
-        return attributes;
-    }
-
-    @SuppressWarnings("deprecation")
-    private static Attribute from(URLBuilder urlBuilder, AttributeType type) {
-        if (urlBuilder == null) {
-            return null;
-        }
-        try {
-            if (urlBuilder.getDescription() == null) {
-                throw new AttributeException("Problems loading attribute v2.");
-            }
-
-            return new Attribute()
-                    .setName(urlBuilder.getDescription())
-                    .setUrl(urlBuilder.getId())
-                    .setType(type);
-        } catch (Exception e) {
-            Timber.e(e, "Parsing URL to attribute");
-            return null;
-        }
-    }
-
-    @Nullable
-    @CheckResult
-    @SuppressWarnings("deprecation")
-    private static Content importJsonLegacy(File json, File file) {
-        try {
-            DoujinBuilder doujinBuilder =
-                    JsonHelper.jsonToObject(json, DoujinBuilder.class);
-            //noinspection deprecation
-            ContentV1 content = new ContentV1();
-            content.setUrl(doujinBuilder.getId());
-            content.setHtmlDescription(doujinBuilder.getDescription());
-            content.setTitle(doujinBuilder.getTitle());
-            content.setSeries(from(doujinBuilder.getSeries(),
-                    AttributeType.SERIE));
-            Attribute artist = from(doujinBuilder.getArtist(),
-                    AttributeType.ARTIST);
-            List<Attribute> artists = null;
-            if (artist != null) {
-                artists = new ArrayList<>(1);
-                artists.add(artist);
-            }
-
-            content.setArtists(artists);
-            content.setCoverImageUrl(doujinBuilder.getUrlImageTitle());
-            content.setQtyPages(doujinBuilder.getQtyPages());
-            Attribute translator = from(doujinBuilder.getTranslator(),
-                    AttributeType.TRANSLATOR);
-            List<Attribute> translators = null;
-            if (translator != null) {
-                translators = new ArrayList<>(1);
-                translators.add(translator);
-            }
-            content.setTranslators(translators);
-            content.setTags(from(doujinBuilder.getLstTags()));
-            content.setLanguage(from(doujinBuilder.getLanguage(), AttributeType.LANGUAGE));
-
-            content.setMigratedStatus();
-            content.setDownloadDate(new Date().getTime());
-            Content contentV2 = content.toV2Content();
-
-            String fileRoot = Preferences.getRootFolderName();
-            contentV2.setStorageFolder(json.getAbsoluteFile().getParent().substring(fileRoot.length()));
-            try {
-                JsonHelper.saveJson(contentV2, file);
-            } catch (IOException e) {
-                Timber.e(e,
-                        "Error converting JSON (old) to JSON (v2): %s", content.getTitle());
-            }
-
-            return contentV2;
-        } catch (Exception e) {
-            Timber.e(e, "Error reading JSON (old) file");
-        }
-        return null;
-    }
-
-    @Nullable
-    @CheckResult
-    private static Content importJsonV1(File json, File file) {
-        try {
-            //noinspection deprecation
-            ContentV1 content = JsonHelper.jsonToObject(json, ContentV1.class);
-            if (content.getStatus() != StatusContent.DOWNLOADED
-                    && content.getStatus() != StatusContent.ERROR) {
-                content.setMigratedStatus();
-            }
-            Content contentV2 = content.toV2Content();
-
-            String fileRoot = Preferences.getRootFolderName();
-            contentV2.setStorageFolder(json.getAbsoluteFile().getParent().substring(fileRoot.length()));
-            try {
-                JsonHelper.saveJson(contentV2, file);
-            } catch (IOException e) {
-                Timber.e(e, "Error converting JSON (v1) to JSON (v2): %s", content.getTitle());
-            }
-
-            return contentV2;
-        } catch (Exception e) {
-            Timber.e(e, "Error reading JSON (v1) file");
-        }
         return null;
     }
 

@@ -6,7 +6,6 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
-import android.util.Pair;
 
 import com.facebook.stetho.Stetho;
 import com.google.android.gms.security.ProviderInstaller;
@@ -23,7 +22,6 @@ import me.devsaki.hentoid.notification.update.UpdateNotificationChannel;
 import me.devsaki.hentoid.services.UpdateCheckService;
 import me.devsaki.hentoid.timber.CrashlyticsTree;
 import me.devsaki.hentoid.util.Preferences;
-import me.devsaki.hentoid.util.ShortcutHelper;
 import timber.log.Timber;
 
 /**
@@ -106,10 +104,6 @@ public class HentoidApp extends Application {
         // Clears all previous notifications
         NotificationManager manager = (NotificationManager) instance.getSystemService(Context.NOTIFICATION_SERVICE);
         if (manager != null) manager.cancelAll();
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
-            ShortcutHelper.buildShortcuts(this);
-        }
     }
 
     /**
@@ -138,34 +132,6 @@ public class HentoidApp extends Application {
      */
     @SuppressWarnings("deprecation")
     private void UpgradeTo(int versionCode, HentoidDB db) {
-        if (versionCode > 43) // Update all "storage_folder" fields in CONTENT table (mandatory)
-        {
-            List<Content> contents = db.selectContentEmptyFolder();
-            if (contents != null && contents.size() > 0) {
-                for (int i = 0; i < contents.size(); i++) {
-                    Content content = contents.get(i);
-                    content.setStorageFolder("/" + content.getSite().getDescription() + "/" + content.getOldUniqueSiteId()); // This line must use deprecated code, as it migrates it to newest version
-                    db.updateContentStorageFolder(content);
-                }
-            }
-        }
-        if (versionCode > 59) // Migrate the old download queue (books in DOWNLOADING or PAUSED status) in the queue table
-        {
-            // Gets books that should be in the queue but aren't
-            List<Integer> contentToMigrate = db.selectContentsForQueueMigration();
-
-            if (contentToMigrate.size() > 0) {
-                // Gets last index of the queue
-                List<Pair<Integer, Integer>> queue = db.selectQueue();
-                int lastIndex = 1;
-                if (queue.size() > 0) {
-                    lastIndex = queue.get(queue.size() - 1).second + 1;
-                }
-
-                for (int i : contentToMigrate) {
-                    db.insertQueue(i, lastIndex++);
-                }
-            }
-        }
+        // Nothing here, new app !
     }
 }

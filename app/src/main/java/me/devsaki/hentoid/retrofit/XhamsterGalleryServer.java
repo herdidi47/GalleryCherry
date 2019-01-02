@@ -2,17 +2,17 @@ package me.devsaki.hentoid.retrofit;
 
 import io.reactivex.Single;
 import me.devsaki.hentoid.enums.Site;
-import me.devsaki.hentoid.parsers.content.PururinContent;
+import me.devsaki.hentoid.parsers.content.XhamsterContent;
 import pl.droidsonroids.retrofit2.JspoonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
-public class PururinServer {
+public class XhamsterGalleryServer {
 
     public static final Api API = new Retrofit.Builder()
-            .baseUrl(Site.PURURIN.getUrl())
+            .baseUrl(Site.XHAMSTER.getUrl())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.createAsync())
             .addConverterFactory(JspoonConverterFactory.create())
             .build()
@@ -20,7 +20,7 @@ public class PururinServer {
 
     public interface Api {
 
-        @GET("/gallery/{id1}/{id2}")
-        Single<PururinContent> getGalleryMetadata(@Path("id1") String contentId1, @Path("id2") String contentId2);
+        @GET("/gallery/{id}")
+        Single<XhamsterContent> getGalleryMetadata(@Path("id") String contentId);
     }
 }
