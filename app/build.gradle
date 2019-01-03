@@ -22,7 +22,7 @@ android {
         versionCode 71
         versionName '1.5.4'
         proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        buildConfigField 'String', 'UPDATE_URL', '"https://raw.githubusercontent.com/avluis/Hentoid/master/app/"'
+        buildConfigField 'String', 'UPDATE_URL', '"https://github.com/RobbWatershed/GalleryCherry/tree/master/app/"'
     }
     buildTypes {
         debug {
