@@ -1,18 +1,12 @@
 package me.devsaki.hentoid.parsers;
 
-import android.net.Uri;
-
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import org.jsoup.nodes.Document;
 
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import me.devsaki.hentoid.database.domains.Content;
 import me.devsaki.hentoid.parsers.content.XhamsterGalleryContent;
@@ -21,7 +15,6 @@ import me.devsaki.hentoid.util.Consts;
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
 import okhttp3.Request;
-import timber.log.Timber;
 
 /**
  * Created by avluis on 07/26/2016.
@@ -36,7 +29,7 @@ public class XhamsterParser extends BaseParser {
         Gson gson = new Gson();
 
         for (int i = 0; i < Math.ceil(content.getQtyPages() / 16.0); i++) {
-            XhamsterGalleryQuery query = new XhamsterGalleryQuery(content.getUniqueSiteId(), i);
+            XhamsterGalleryQuery query = new XhamsterGalleryQuery(content.getUniqueSiteId(), i + 1);
 
             HttpUrl url = new HttpUrl.Builder()
                     .scheme("https")
@@ -47,10 +40,10 @@ public class XhamsterParser extends BaseParser {
 
             Document doc = getOnlineDocument(url, XhamsterParser::onIntercept);
             if (doc != null) {
-                // JSON response is wrapped between <html><head></head><body> [ ... ] </body></html>
-                String body = doc.toString()
-                        .replace("<html>\n" + " <head></head>\n" + " <body>\n" + "  [", "")
-                        .replace("]\n" + " </body>\n" + "</html>", "");
+                // JSON response is wrapped between [ ... ]'s
+                String body = doc.body().childNode(0).toString()
+                        .replace("\n[", "")
+                        .replace("}}]}]", "}}]}");
 
                 XhamsterGalleryContent galleryContent = gson.fromJson(body, XhamsterGalleryContent.class);
                 result.addAll(galleryContent.toImageUrlList());
