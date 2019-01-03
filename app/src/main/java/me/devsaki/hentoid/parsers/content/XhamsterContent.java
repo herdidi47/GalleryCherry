@@ -24,7 +24,7 @@ public class XhamsterContent {
     private String title;
     @Selector("head title")
     private String headTitle;
-    @Selector(value = ".categories-container__item")
+    @Selector(value = ".categories_of_pictures .categories-container__item")
     private List<Element> tags;
 
 
