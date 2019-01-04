@@ -125,6 +125,24 @@ public class HentoidApp extends Application {
     }
 
     /**
+     * Clean up and upgrade database
+     */
+    private void performDatabaseHousekeeping() {
+        HentoidDB db = HentoidDB.getInstance(this);
+        Timber.d("Content item(s) count: %s", db.countContentEntries());
+
+        // Set items that were being downloaded in previous session as paused
+        db.updateContentStatus(StatusContent.DOWNLOADING, StatusContent.PAUSED);
+
+        // Clear temporary books created from browsing a book page without downloading it
+        List<Content> obsoleteTempContent = db.selectContentByStatus(StatusContent.SAVED);
+        for (Content c : obsoleteTempContent) db.deleteContent(c);
+
+        // Perform technical data updates
+        UpgradeTo(BuildConfig.VERSION_CODE, db);
+    }
+
+    /**
      * Handles complex DB version updates at startup
      *
      * @param versionCode Current app version
