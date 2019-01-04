@@ -16,7 +16,7 @@
             android:id="@+id/iv_app_logo"
             android:layout_width="@dimen/about_ic_hentoid_width"
             android:layout_height="@dimen/about_ic_hentoid_height"
-            android:src="@drawable/ic_hentoid"
+            android:src="@drawable/ic_cherry"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="ContentDescription" />

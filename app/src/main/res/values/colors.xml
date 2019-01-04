@@ -6,12 +6,11 @@
     <color name="accent">@color/accent_red</color>
 
     <!-- App palette -->
-    <color name="very_dark_red">#3f0000</color>
-    <color name="dark_red">#470000</color>
-    <color name="taupe">#592828</color>
-    <color name="accent_red">#b25959</color>
-    <color name="light_red">#ffebee</color>
-    <color name="very_dark_pink">#6d0721</color>
+    <color name="very_dark_red">#a00037</color>
+    <color name="dark_red">#d81b60</color>
+    <color name="taupe">#ff5c8d</color>
+    <color name="accent_red">#ff80ab</color>
+    <color name="light_red">#ffb2dd</color>
 
     <!-- Neutral Colors -->
     <color name="white">#FFFFFF</color>

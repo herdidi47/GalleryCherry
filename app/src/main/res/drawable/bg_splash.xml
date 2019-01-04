@@ -12,7 +12,7 @@
     <item>
         <bitmap
             android:gravity="center"
-            android:src="@drawable/ic_hentoid"
+            android:src="@drawable/ic_cherry"
             android:tileMode="disabled" />
     </item>
 
