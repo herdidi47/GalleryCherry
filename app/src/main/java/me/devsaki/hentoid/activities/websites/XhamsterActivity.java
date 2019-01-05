@@ -36,10 +36,18 @@ public class XhamsterActivity extends BaseWebActivity {
         @Override
         protected void onGalleryFound(String url) {
             String[] galleryUrlParts = url.split("/");
-            compositeDisposable.add(XhamsterGalleryServer.API.getGalleryMetadata(galleryUrlParts[galleryUrlParts.length - 1])
+            String page, id;
+            if (galleryUrlParts[galleryUrlParts.length - 1].length() < 4) {
+                page = galleryUrlParts[galleryUrlParts.length - 1];
+                id = galleryUrlParts[galleryUrlParts.length - 2];
+            } else {
+                page = "1";
+                id = galleryUrlParts[galleryUrlParts.length - 1];
+            }
+            compositeDisposable.add(XhamsterGalleryServer.API.getGalleryMetadata(id, page)
                     .subscribe(
                             metadata -> listener.onResultReady(metadata.toContent(), 1), throwable -> {
-                                Timber.e(throwable, "Error parsing content.");
+                                Timber.e(throwable, "Error parsing content for page %s", url);
                                 listener.onResultFailed("");
                             })
             );
