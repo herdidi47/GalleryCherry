@@ -21,8 +21,8 @@ public enum AttributeType {
     CIRCLE(7, R.drawable.ic_menu_about),
     CHARACTER(8, R.drawable.ic_attribute_character),
     CATEGORY(9, R.drawable.ic_menu_about),
-    // Attributes displayed on screen and stored elsewhere
-    SOURCE(10, R.drawable.ic_attribute_source);
+    SOURCE(10, R.drawable.ic_attribute_source), // Attribute displayed on screen and stored elsewhere
+    MODEL(11, R.drawable.ic_attribute_character);
 
     private final int code;
     private final int icon;

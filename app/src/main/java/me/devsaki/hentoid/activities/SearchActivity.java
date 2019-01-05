@@ -39,11 +39,9 @@ import static me.devsaki.hentoid.abstracts.DownloadsFragment.MODE_LIBRARY;
 public class SearchActivity extends BaseActivity {
 
     private TextView tagCategoryText;
-    private TextView artistCategoryText;
-    private TextView seriesCategoryText;
-    private TextView characterCategoryText;
-    private TextView languageCategoryText;
+    private TextView modelCategoryText;
     private TextView sourceCategoryText;
+
 
     // Book search button at the bottom of screen
     private TextView searchButton;
@@ -109,17 +107,8 @@ public class SearchActivity extends BaseActivity {
         tagCategoryText = findViewById(R.id.textCategoryTag);
         tagCategoryText.setOnClickListener(v -> onAttrButtonClick(AttributeType.TAG));
 
-        artistCategoryText = findViewById(R.id.textCategoryArtist);
-        artistCategoryText.setOnClickListener(v -> onAttrButtonClick(AttributeType.ARTIST, AttributeType.CIRCLE));
-
-        seriesCategoryText = findViewById(R.id.textCategorySeries);
-        seriesCategoryText.setOnClickListener(v -> onAttrButtonClick(AttributeType.SERIE));
-
-        characterCategoryText = findViewById(R.id.textCategoryCharacter);
-        characterCategoryText.setOnClickListener(v -> onAttrButtonClick(AttributeType.CHARACTER));
-
-        languageCategoryText = findViewById(R.id.textCategoryLanguage);
-        languageCategoryText.setOnClickListener(v -> onAttrButtonClick(AttributeType.LANGUAGE));
+        modelCategoryText = findViewById(R.id.textCategoryModel);
+        modelCategoryText.setOnClickListener(v -> onAttrButtonClick(AttributeType.MODEL));
 
         sourceCategoryText = findViewById(R.id.textCategorySource);
         sourceCategoryText.setOnClickListener(v -> onAttrButtonClick(AttributeType.SOURCE));
@@ -139,11 +128,8 @@ public class SearchActivity extends BaseActivity {
 
     private void onQueryUpdated(SparseIntArray attrCount) {
         updateCategoryButton(tagCategoryText, attrCount, AttributeType.TAG);
-        updateCategoryButton(artistCategoryText, attrCount, AttributeType.ARTIST, AttributeType.CIRCLE);
-        updateCategoryButton(seriesCategoryText, attrCount, AttributeType.SERIE);
-        updateCategoryButton(characterCategoryText, attrCount, AttributeType.CHARACTER);
-        updateCategoryButton(languageCategoryText, attrCount, AttributeType.LANGUAGE);
-        if (MODE_LIBRARY == mode) updateCategoryButton(sourceCategoryText, attrCount, AttributeType.SOURCE);
+        updateCategoryButton(modelCategoryText, attrCount, AttributeType.MODEL);
+        updateCategoryButton(sourceCategoryText, attrCount, AttributeType.SOURCE);
     }
 
     private void updateCategoryButton(TextView button, SparseIntArray attrCount, AttributeType... types) {
