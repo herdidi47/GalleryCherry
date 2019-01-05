@@ -239,9 +239,7 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentHolder> implemen
         holder.tvSeries.setText(Helper.fromHtml(templateSeries.replace("@series@", seriesBuilder.toString())));
 
         if (seriesAttributes == null) {
-            holder.tvSeries.setText(Helper.fromHtml(templateSeries.replace("@series@",
-                    context.getResources().getString(R.string.work_untitled))));
-            holder.tvSeries.setVisibility(View.VISIBLE);
+            holder.tvSeries.setVisibility(View.GONE);
         }
     }
 
@@ -268,9 +266,7 @@ public class ContentAdapter extends RecyclerView.Adapter<ContentHolder> implemen
         holder.tvArtist.setText(Helper.fromHtml(templateArtist.replace("@artist@", artistsBuilder.toString())));
 
         if (attributes.isEmpty()) {
-            holder.tvArtist.setText(Helper.fromHtml(templateArtist.replace("@artist@",
-                    context.getResources().getString(R.string.work_untitled))));
-            holder.tvArtist.setVisibility(View.VISIBLE);
+            holder.tvArtist.setVisibility(View.GONE);
         }
     }
 

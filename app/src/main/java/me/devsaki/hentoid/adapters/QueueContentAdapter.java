@@ -157,9 +157,7 @@ public class QueueContentAdapter extends ArrayAdapter<Content> {
         holder.tvSeries.setText(Helper.fromHtml(templateSeries.replace("@series@", series)));
 
         if (seriesAttributes == null) {
-            holder.tvSeries.setText(Helper.fromHtml(templateSeries.replace("@series@",
-                    context.getResources().getString(R.string.work_untitled))));
-            holder.tvSeries.setVisibility(View.VISIBLE);
+            holder.tvSeries.setVisibility(View.GONE);
         }
     }
 
@@ -189,9 +187,7 @@ public class QueueContentAdapter extends ArrayAdapter<Content> {
         holder.tvArtist.setText(Helper.fromHtml(templateArtist.replace("@artist@", artists)));
 
         if (attributes.isEmpty()) {
-            holder.tvArtist.setText(Helper.fromHtml(templateArtist.replace("@artist@",
-                    context.getResources().getString(R.string.work_untitled))));
-            holder.tvArtist.setVisibility(View.VISIBLE);
+            holder.tvArtist.setVisibility(View.GONE);
         }
     }
 

@@ -16,9 +16,12 @@ import pl.droidsonroids.jspoon.annotation.Selector;
 import timber.log.Timber;
 
 public class XhamsterContent {
-    @Selector(value = "head meta[name='twitter:url']", attr="content")
+
+    private String GALLERY_FOLDER = "/photos/gallery/";
+
+    @Selector(value = "head meta[name='twitter:url']", attr = "content")
     private String galleryUrl;
-    @Selector(value = "img.thumb", attr="src")
+    @Selector(value = "img.thumb", attr = "src")
     private List<String> thumbs;
     @Selector("h1.page-title")
     private String title;
@@ -28,12 +31,12 @@ public class XhamsterContent {
     private List<Element> tags;
 
 
-    public Content toContent()
-    {
+    public Content toContent() {
         Content result = new Content();
 
         result.setSite(Site.XHAMSTER);
-        result.setUrl(galleryUrl);
+        int galleryLocation = galleryUrl.indexOf(GALLERY_FOLDER) + GALLERY_FOLDER.length();
+        result.setUrl(galleryUrl.substring(galleryLocation));
         result.setCoverImageUrl(thumbs.isEmpty() ? "" : thumbs.get(0));
         result.setTitle(title);
 
