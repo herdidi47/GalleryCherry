@@ -80,7 +80,7 @@
             android:paddingTop="8dp"
             tools:background="@color/primary"
             tools:ignore="ContentDescription"
-            tools:src="@drawable/ic_menu_hitomi" />
+            tools:src="@drawable/ic_menu_xhamster" />
 
         <ImageView
             android:id="@+id/ivError"
